@@ -12,12 +12,12 @@ function mlp_gui
        lastDir = pwd;
    end
  
-   vOrigin = 40;
+   vOrigin = 15;
    vHeight = 25;
    vGap = 10;
    hOrigin = 10;
    hGap = 10;
-   vTotalHeight = 400;
+   vTotalHeight = 450;
    
    %  Create and then hide the GUI as it is being constructed.
    f = figure('Visible','off','Position',[10,10,800,vTotalHeight],'Name','MLP Training Program','NumberTitle','off','Menubar','none');
@@ -33,7 +33,7 @@ function mlp_gui
             sz = [sz vHeight];
         end
         h = uicontrol('Style',style,'String',string,...
-          'Position',[tl(1),vTotalHeight-tl(2),sz(1),sz(2)],...
+          'Position',[tl(1),vTotalHeight-tl(2)-sz(2),sz(1),sz(2)],...
           'Callback',callback);
         tr = tl+[sz(1)+hGap 0];
         bl = tl+[0 sz(2)+vGap];
@@ -45,15 +45,9 @@ function mlp_gui
    [heditTrgFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
    [hbuttonBrowseTrgFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Trg', @browse_Callback);
  
-%    row = row+1;
-%    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
-%    [htextValFile tr bl] = makeControl(tl, labelWidths, 'text', 'Validation File?');
-%    [heditValFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
-% 
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [hcheckValFile tr bl] = makeControl(tl, round(labelWidths), 'checkbox', 'Use Validation File', @valfileOn_Callback);
-%    [htextValFile tr bl] = makeControl(tr, labelWidths, 'text', 'Validation File');
    [heditValFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
    [hbuttonBrowseValFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Val', @browse_Callback);
    set(hcheckValFile, 'Value', 1);
@@ -85,6 +79,9 @@ function mlp_gui
    [htextInputs tr bl] = makeControl(tl, labelWidths, 'text', resources('N'));
    [heditInputs tr bl] = makeControl(tr, labelWidths, 'edit', '');
  
+   message = [{'Image Processing and Neural Networks Lab'; ''}; resources('Info'); {''; 'GUI Author: Rohit Rawat'}];
+   [htextInfo tr bl] = makeControl(tr+[50 30], [350 200], 'text', message);
+
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextOutputs tr bl] = makeControl(tl, labelWidths, 'text', resources('M'));
@@ -124,6 +121,10 @@ function mlp_gui
        set(heditExtra,  'Visible', 'off');
    end
  
+   row = row+1;
+   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
+   [hbuttonHelp tr bl] = makeControl(tl, buttonWidths, 'pushbutton', 'Help', @help_Callback);
+
    if(pre_fill)
        set(heditTrgFile, 'String', training_file);
        set(heditValFile, 'String', validation_file);
@@ -282,8 +283,23 @@ function mlp_gui
             disp(err.identifier);
             if(strcmp(err.stack(1).name, 'read_approx_file'))
                 msgbox('There was a problem reading in the file. Check that you specified the correct number of inputs and outputs, selected the correct file type, and the file uses space delimiters only. See the console for details.');
+            else
+                msgbox('There was a problem. See the console for details.');
             end
         end
    end
+
+   function help_Callback(source,eventdata)
+       if(exist(fullfile(pwd,'README.HTML'), 'file'))
+           open('README.HTML');
+       elseif(exist(fullfile(pwd,'README.MD'), 'file'))
+           edit('README.MD');
+       elseif(exist(fullfile(pwd,'README.TXT'), 'file'))
+           edit('README.TXT');
+       else
+           msgbox('Readme not found.');
+       end
+   end
+
  
 end

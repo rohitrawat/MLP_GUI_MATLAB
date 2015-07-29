@@ -9,6 +9,11 @@ switch(ID);
         value = 'Hidden Units (Nh)';
     case 'Nit'
         value = 'Training Iterations (Nit)';
+    case 'Info'
+        value = {'MLP Training Program',
+            '',
+            'Algorithm: MOLF-ADAPT',
+            'Author: Rohit Rawat & Jignesh Patel'};
     
     % Advanced settings: Do not modify unless you know what you are doing!
     case 'DisableValidation'
