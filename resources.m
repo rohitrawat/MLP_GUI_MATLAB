@@ -6,11 +6,13 @@ switch(ID);
     case 'M'
         value = 'Outputs/Classes (M)';
     case 'Nh'
-        value = 'RBF Size (Nh)';
+        value = 'Hidden Units (Nh)';
     case 'Nit'
         value = 'Training Iterations (Nit)';
-%     case 'DisableValidation'
-%         value = false;
-%     case 'Extra'
-%         value = '';
+    
+    % Advanced settings: Do not modify unless you know what you are doing!
+    case 'DisableValidation'
+        value = false;  % leave false. if true, validation file cannot be specified.
+    case 'Extra'
+        value = '';  % leave empty '', otherwise set to what the Extra input should be called
 end

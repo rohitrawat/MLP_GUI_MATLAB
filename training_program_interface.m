@@ -1,4 +1,4 @@
-function [E_t_best E_v_best] = training_program_interface(training_file, N, M, Nh, Nit, validation_file, file_type)
+function [E_t_best E_v_best] = training_program_interface(training_file, N, M, Nh, Nit, validation_file, file_type, Extra)
 
 if(file_type == 1)
     % call the program for regression case here:

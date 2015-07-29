@@ -17,7 +17,7 @@ function mlp_gui
    vGap = 10;
    hOrigin = 10;
    hGap = 10;
-   vTotalHeight = 380;
+   vTotalHeight = 400;
    
    %  Create and then hide the GUI as it is being constructed.
    f = figure('Visible','off','Position',[10,10,800,vTotalHeight],'Name','MLP Training Program','NumberTitle','off','Menubar','none');
@@ -57,6 +57,16 @@ function mlp_gui
    [heditValFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
    [hbuttonBrowseValFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Val', @browse_Callback);
    set(hcheckValFile, 'Value', 1);
+   
+   if(resources('DisableValidation'))
+       set(hcheckValFile,  'Visible', 'off');
+       set(heditValFile,  'Visible', 'off');
+       set(hbuttonBrowseValFile,  'Visible', 'off');
+       valfileOn = false;
+       validation_file = '';
+       set(hcheckValFile, 'Value', 0);
+       set(heditValFile,  'String', '');
+   end
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
@@ -104,6 +114,15 @@ function mlp_gui
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextValErr tr bl] = makeControl(tl, labelWidths, 'text', 'Validation Error');
    [heditValErr tr bl] = makeControl(tr, labelWidths, 'edit', '');
+ 
+   row = row+1;
+   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
+   [htextExtra tr bl] = makeControl(tl, labelWidths, 'text', resources('Extra'));
+   [heditExtra tr bl] = makeControl(tr, labelWidths, 'edit', '0');
+   if(length(resources('Extra'))==0)
+       set(htextExtra,  'Visible', 'off');
+       set(heditExtra,  'Visible', 'off');
+   end
  
    if(pre_fill)
        set(heditTrgFile, 'String', training_file);
@@ -223,7 +242,13 @@ function mlp_gui
             msgbox(sprintf('Nit is invalid:\n%d', Nit));
             return;
         end
-        
+        strExtra = get(heditExtra, 'String');
+        Extra = str2double(strExtra);
+        if(isnan(Extra))
+            msgbox(sprintf('%s is invalid:\n%d', resources('Extra'), Extra));
+            return;
+        end
+
         save('history.mat', 'training_file', 'N', 'M', 'Nh', 'Nit', 'validation_file', 'lastDir', 'file_type', 'valfileOn');
         
         if(file_type == 1)
@@ -239,7 +264,7 @@ function mlp_gui
         set(htextStatus, 'String', 'Working...');
         drawnow;
         try
-            [E_t_best E_v_best] = training_program_interface(training_file, N, M, Nh, Nit, validation_file, file_type);
+            [E_t_best E_v_best] = training_program_interface(training_file, N, M, Nh, Nit, validation_file, file_type, Extra);
             set(htextStatus, 'String', 'Ready.');
             set(heditTrgErr, 'String', num2str(E_t_best));
             set(heditValErr, 'String', num2str(E_v_best));
@@ -261,4 +286,4 @@ function mlp_gui
         end
    end
  
-end % cancel action, disable buttons, option to not use validation file**
+end
