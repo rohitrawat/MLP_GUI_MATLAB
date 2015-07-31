@@ -91,7 +91,7 @@ function training_gui
    [htextInputs tr bl] = makeControl(tl, labelWidths, 'text', resources('N'));
    [heditInputs tr bl] = makeControl(tr, labelWidths, 'edit', '');
  
-   message = [{'Image Processing and Neural Networks Lab'; ''}; resources('Info'); {''; 'GUI Author: Rohit Rawat'}];
+   message = [{'Image Processing and Neural Networks Lab'; 'The University of Texas at Arlington'; ''}; resources('Info'); {''; 'GUI Author: Rohit Rawat'}];
    [htextInfo tr bl] = makeControl(tr+[50 30], [350 200], 'text', message);
 
    row = row+1;
@@ -283,8 +283,8 @@ function training_gui
             set(htextValErr, 'String', 'Validation Error (% error)');
         end
         
-        old_path = path;
-        addpath(fullfile('..','hwo_molf_pruning'));
+%         old_path = path;
+%         addpath(fullfile('..','hwo_molf_pruning'));
         set(htextStatus, 'String', 'Working...');
         drawnow;
         try
@@ -298,7 +298,7 @@ function training_gui
             set(htextStatus, 'String', 'Error! See console.');
             set(heditTrgErr, 'String', 'failed');
             set(heditValErr, 'String', 'failed');
-            path(old_path);
+%             path(old_path);
             disp(err);
             disp(err.message);
             for i=1:length(err.stack)

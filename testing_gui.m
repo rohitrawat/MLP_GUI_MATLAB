@@ -192,8 +192,8 @@ function testing_gui
             set(htextTstErr, 'String', 'Testing Error (% error)');
         end
         
-        old_path = path;
-        addpath(fullfile('..','hwo_molf_pruning'));
+%         old_path = path;
+%         addpath(fullfile('..','hwo_molf_pruning'));
         set(htextStatus, 'String', 'Working...');
         drawnow;
         try
@@ -209,7 +209,7 @@ function testing_gui
             % Display any other errors as usual.            
             set(htextStatus, 'String', 'Error! See console.');
             set(heditTstErr, 'String', 'failed');
-            path(old_path);
+%             path(old_path);
             disp(err);
             disp(err.message);
             for i=1:length(err.stack)
@@ -237,7 +237,7 @@ function testing_gui
    end
 
    function about_Callback(source,eventdata)
-       message = [{'Image Processing and Neural Networks Lab'; ''}; resources('Info'); {''; 'GUI Author: Rohit Rawat'}];
+       message = [{'Image Processing and Neural Networks Lab'; 'The University of Texas at Arlington'; ''}; resources('Info'); {''; 'GUI Author: Rohit Rawat'}];
        msgbox(message);
    end
 

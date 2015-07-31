@@ -15,6 +15,8 @@ switch(ID);
         value = 'MLP Training Program';
     case 'TestTitle'
         value = 'MLP Testing Program';
+    case 'CodeDirectory'
+        value = '../hwo_molf_pruning';
     case 'Info'
         value = {'MLP Training Program',
             '',
