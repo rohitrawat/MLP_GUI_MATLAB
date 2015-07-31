@@ -4,6 +4,12 @@ function mlp_gui
 % July 28, 2015
 % rohitrawat@gmail.com
 
+   training_file = '';
+   validation_file = '';
+   testing_file = '';
+   weights_file = '';
+   lastDir = '';
+   
    pre_fill = false;
    if(exist('history.mat', 'file'))
        load('history.mat');
@@ -17,10 +23,11 @@ function mlp_gui
    vGap = 10;
    hOrigin = 10;
    hGap = 10;
-   vTotalHeight = 450;
+   hTotalWidth = 800;
+   vTotalHeight = 475;
    
    %  Create and then hide the GUI as it is being constructed.
-   f = figure('Visible','off','Position',[10,10,800,vTotalHeight],'Name','MLP Training Program','NumberTitle','off','Menubar','none');
+   f = figure('Visible','off','Position',[10,10,hTotalWidth,vTotalHeight],'Name',resources('TrainTitle'),'NumberTitle','off','Menubar','none','Color',[0.8 0.8 0.8]);
    
    labelWidths = 150;
    buttonWidths = 150;
@@ -32,9 +39,14 @@ function mlp_gui
         if(numel(sz)==1)
             sz = [sz vHeight];
         end
+        if(strcmpi(style, 'edit'))
+            color = [1 1 1];
+        else
+            color = [0.8 0.8 0.8];
+        end
         h = uicontrol('Style',style,'String',string,...
           'Position',[tl(1),vTotalHeight-tl(2)-sz(2),sz(1),sz(2)],...
-          'Callback',callback);
+          'Callback',callback,'BackgroundColor',color);
         tr = tl+[sz(1)+hGap 0];
         bl = tl+[0 sz(2)+vGap];
     end
@@ -43,13 +55,13 @@ function mlp_gui
    tl = [hOrigin vOrigin+(row-1)*vHeight];
    [htextTrgFile tr bl] = makeControl(tl, labelWidths, 'text', 'Training File');
    [heditTrgFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
-   [hbuttonBrowseTrgFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Trg', @browse_Callback);
+   [hbuttonBrowseTrgFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Select File..', @browse_Callback);
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [hcheckValFile tr bl] = makeControl(tl, round(labelWidths), 'checkbox', 'Use Validation File', @valfileOn_Callback);
    [heditValFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
-   [hbuttonBrowseValFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Val', @browse_Callback);
+   [hbuttonBrowseValFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Select File..', @browse_Callback);
    set(hcheckValFile, 'Value', 1);
    
    if(resources('DisableValidation'))
@@ -99,27 +111,36 @@ function mlp_gui
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
-   [hbuttonTrain tr bl] = makeControl(tl, buttonWidths, 'pushbutton', 'Train', @train_Callback);
-   [htextStatus tr bl] = makeControl(tr, labelWidths, 'text', 'Ready.');
-   
-   row = row+1;
-   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
-   [htextTrgErr tr bl] = makeControl(tl, labelWidths, 'text', 'Training Error');
-   [heditTrgErr tr bl] = makeControl(tr, labelWidths, 'edit', '');
- 
-   row = row+1;
-   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
-   [htextValErr tr bl] = makeControl(tl, labelWidths, 'text', 'Validation Error');
-   [heditValErr tr bl] = makeControl(tr, labelWidths, 'edit', '');
- 
-   row = row+1;
-   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextExtra tr bl] = makeControl(tl, labelWidths, 'text', resources('Extra'));
    [heditExtra tr bl] = makeControl(tr, labelWidths, 'edit', '0');
    if(length(resources('Extra'))==0)
        set(htextExtra,  'Visible', 'off');
        set(heditExtra,  'Visible', 'off');
    end
+ 
+   row = row+1;
+   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
+   [hbuttonTrain tr bl] = makeControl(tl, buttonWidths, 'pushbutton', 'Train', @train_Callback);
+   [htextStatus1 tr bl] = makeControl(tr, round(labelWidths/2), 'text', 'Status:');
+   [htextStatus tr bl] = makeControl(tr, labelWidths, 'text', 'Ready.');
+   set(htextStatus, 'HorizontalAlignment', 'left');
+   
+   row = row+1;
+   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
+   [hbuttonTest tr bl] = makeControl(tl, buttonWidths, 'pushbutton', 'Open Testing Program', @test_Callback);
+   set(hbuttonTest,  'Visible', 'off');
+   
+   row = row+1;
+   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
+   [htextTrgErr tr bl] = makeControl(tl, labelWidths, 'text', 'Training Error');
+   [heditTrgErr tr bl] = makeControl(tr, labelWidths, 'edit', '');
+   set(heditTrgErr, 'Enable', 'off');
+ 
+   row = row+1;
+   tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
+   [htextValErr tr bl] = makeControl(tl, labelWidths, 'text', 'Validation Error');
+   [heditValErr tr bl] = makeControl(tr, labelWidths, 'edit', '');
+   set(heditValErr, 'Enable', 'off');
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
@@ -164,11 +185,10 @@ function mlp_gui
    %  Browse button callback.
       function browse_Callback(source,eventdata) 
          % Determine the browse button
-         str = get(source, 'String');
-         switch str;
-         case 'Browse Trg'
+         switch source;
+         case hbuttonBrowseTrgFile
             dtitle = 'Select training file..';
-         case 'Browse Val'
+         case hbuttonBrowseValFile
             dtitle = 'Select validation file..';
          end
          [FileName,PathName] = uigetfile(fullfile(lastDir,'*.*'), dtitle); %lastDir
@@ -177,11 +197,11 @@ function mlp_gui
          end
          lastDir = PathName;
          filename = fullfile(PathName,FileName);
-         switch str;
-         case 'Browse Trg'
+         switch source;
+         case hbuttonBrowseTrgFile
             training_file = filename;
             set(heditTrgFile, 'String', filename);
-         case 'Browse Val'
+         case hbuttonBrowseValFile
             validation_file = filename;
             set(heditValFile, 'String', filename);
          end
@@ -249,8 +269,10 @@ function mlp_gui
             msgbox(sprintf('%s is invalid:\n%d', resources('Extra'), Extra));
             return;
         end
+        
+        weights_file = resources('weights_file');
 
-        save('history.mat', 'training_file', 'N', 'M', 'Nh', 'Nit', 'validation_file', 'lastDir', 'file_type', 'valfileOn');
+        save('history.mat', 'training_file', 'N', 'M', 'Nh', 'Nit', 'validation_file', 'lastDir', 'file_type', 'valfileOn', 'testing_file', 'weights_file');
         
         if(file_type == 1)
             set(htextTrgErr, 'String', 'Training Error (MSE)');
@@ -269,6 +291,7 @@ function mlp_gui
             set(htextStatus, 'String', 'Ready.');
             set(heditTrgErr, 'String', num2str(E_t_best));
             set(heditValErr, 'String', num2str(E_v_best));
+            set(hbuttonTest,  'Visible', 'on');
         catch err
             % Display any other errors as usual.            
             set(htextStatus, 'String', 'Error! See console.');
@@ -281,12 +304,16 @@ function mlp_gui
                 fprintf('In %s, function: %s, line %d\n', err.stack(i).file, err.stack(i).name, err.stack(i).line);
             end
             disp(err.identifier);
-            if(strcmp(err.stack(1).name, 'read_approx_file'))
+            if(strcmp(err.stack(1).name, 'read_approx_file') || strcmp(err.stack(1).name, 'read_class_file'))
                 msgbox('There was a problem reading in the file. Check that you specified the correct number of inputs and outputs, selected the correct file type, and the file uses space delimiters only. See the console for details.');
             else
                 msgbox('There was a problem. See the console for details.');
             end
         end
+   end
+
+   function test_Callback(source,eventdata)
+       testing_gui();
    end
 
    function help_Callback(source,eventdata)
