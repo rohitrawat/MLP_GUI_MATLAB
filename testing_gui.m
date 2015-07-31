@@ -197,7 +197,7 @@ function testing_gui
         set(htextStatus, 'String', 'Working...');
         drawnow;
         try
-            [E_test] = testing_program_interface(testing_file, resources('weights_file'), desired_outputs_present, write_processing_results, file_type);
+            [E_test] = testing_program_interface(testing_file, weights_file, desired_outputs_present, write_processing_results, file_type);
             set(htextStatus, 'String', 'Ready.');
             if(desired_outputs_present)
                 set(heditTstErr, 'String', num2str(E_test));
