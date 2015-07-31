@@ -5,8 +5,6 @@ function testing_gui
 % rohitrawat@gmail.com
 
    testing_file = '';
-   validation_file = '';
-   testing_file = '';
    weights_file = '';
    lastDir = '';
    
@@ -55,17 +53,18 @@ function testing_gui
    tl = [hOrigin vOrigin+(row-1)*vHeight];
    [htextTstFile tr bl] = makeControl(tl, labelWidths, 'text', 'Testing File');
    [heditTstFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
-   [hbuttonBrowseTstFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Tst', @browse_Callback);
+   [hbuttonBrowseTstFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Select File..', @browse_Callback);
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextWtsFile tr bl] = makeControl(tl, labelWidths, 'text', 'Weights File');
    [heditWtsFile tr bl] = makeControl(tr, 3*labelWidths, 'edit', '');
-   [hbuttonBrowseWtsFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Browse Wts', @browse_Callback);
+   [hbuttonBrowseWtsFile tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'Select File..', @browse_Callback);
    
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextType tr bl] = makeControl(tl, labelWidths, 'text', 'File Type');
+%    bg = uibuttongroup('Visible', 'off', 'Units', 'pixels', 'Position',[[tr(1) vTotalHeight-tr(2)] 3*labelWidths vHeight*2]);
    bg = uibuttongroup('Visible', 'off', 'Units', 'pixels', 'Position',[0 0 1 1]); % did not work at correct locations
    [hradioTypeReg tr bl] = makeControl(tr, labelWidths, 'radiobutton', 'Regression');
    [hradioTypeCls tr bl] = makeControl(tr, buttonWidths, 'radiobutton', 'Classification');
@@ -84,11 +83,13 @@ function testing_gui
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [hbuttonTest tr bl] = makeControl(tl, buttonWidths, 'pushbutton', 'Run Test', @test_Callback);
+   [htextStatus1 tr bl] = makeControl(tr, round(labelWidths/2), 'text', 'Status:');
    [htextStatus tr bl] = makeControl(tr, labelWidths, 'text', 'Ready.');
+   set(htextStatus, 'HorizontalAlignment', 'left');
    
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
-   [htextTrgErr tr bl] = makeControl(tl, labelWidths, 'text', 'Testing Error');
+   [htextTstErr tr bl] = makeControl(tl, labelWidths, 'text', 'Testing Error');
    [heditTstErr tr bl] = makeControl(tr, labelWidths, 'edit', '');
    set(heditTstErr, 'Enable', 'off');
 
@@ -97,7 +98,7 @@ function testing_gui
    [hbuttonHelp tr bl] = makeControl(tl, buttonWidths, 'pushbutton', 'Help', @help_Callback);
    [hbuttonHelp tr bl] = makeControl(tr, buttonWidths, 'pushbutton', 'About', @about_Callback);
 
-    if(pre_fill)
+   if(pre_fill)
        set(heditTstFile, 'String', testing_file);
        set(heditWtsFile, 'String', weights_file);
        hasOutputs_Callback();
@@ -123,11 +124,10 @@ function testing_gui
    %  Browse button callback.
       function browse_Callback(source,eventdata) 
          % Determine the browse button
-         str = get(source, 'String');
-         switch str;
-         case 'Browse Tst'
+         switch source;
+         case hbuttonBrowseTstFile
             dtitle = 'Select testing file..';
-         case 'Browse Wts'
+         case hbuttonBrowseWtsFile
             dtitle = 'Select weights file..';
          end
          [FileName,PathName] = uigetfile(fullfile(lastDir,'*.*'), dtitle); %lastDir
@@ -136,11 +136,11 @@ function testing_gui
          end
          lastDir = PathName;
          filename = fullfile(PathName,FileName);
-         switch str;
-         case 'Browse Tst'
+         switch source;
+         case hbuttonBrowseTstFile
             testing_file = filename;
             set(heditTstFile, 'String', filename);
-         case 'Browse Wts'
+         case hbuttonBrowseWtsFile
             weights_file = filename;
             set(heditWtsFile, 'String', filename);
          end
@@ -179,9 +179,9 @@ function testing_gui
         save('history.mat', '-append', 'testing_file');
         
         if(file_type == 1)
-            set(htextTrgErr, 'String', 'Testing Error (MSE)');
+            set(htextTstErr, 'String', 'Testing Error (MSE)');
         else
-            set(htextTrgErr, 'String', 'Testing Error (% error)');
+            set(htextTstErr, 'String', 'Testing Error (% error)');
         end
         
         old_path = path;

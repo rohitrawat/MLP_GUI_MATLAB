@@ -1,4 +1,4 @@
-function mlp_gui
+function training_gui
 % MLP GUI
 % Rohit Rawat
 % July 28, 2015
@@ -24,7 +24,7 @@ function mlp_gui
    hOrigin = 10;
    hGap = 10;
    hTotalWidth = 800;
-   vTotalHeight = 475;
+   vTotalHeight = 500;
    
    %  Create and then hide the GUI as it is being constructed.
    f = figure('Visible','off','Position',[10,10,hTotalWidth,vTotalHeight],'Name',resources('TrainTitle'),'NumberTitle','off','Menubar','none','Color',[0.8 0.8 0.8]);
@@ -124,6 +124,7 @@ function mlp_gui
    [htextStatus1 tr bl] = makeControl(tr, round(labelWidths/2), 'text', 'Status:');
    [htextStatus tr bl] = makeControl(tr, labelWidths, 'text', 'Ready.');
    set(htextStatus, 'HorizontalAlignment', 'left');
+   set(hbuttonTrain, 'FontWeight', 'bold');
    
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
