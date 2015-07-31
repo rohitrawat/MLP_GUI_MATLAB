@@ -10,7 +10,7 @@ function testing_gui
    
    pre_fill = false;
    if(exist('history.mat', 'file'))
-       load('history.mat', 'testing_file', 'weights_file', 'lastDir');
+       load('history.mat', 'testing_file', 'weights_file', 'lastDir', 'file_type');
        pre_fill = true;
    else
        lastDir = pwd;
@@ -86,6 +86,7 @@ function testing_gui
    [htextStatus1 tr bl] = makeControl(tr, round(labelWidths/2), 'text', 'Status:');
    [htextStatus tr bl] = makeControl(tr, labelWidths, 'text', 'Ready.');
    set(htextStatus, 'HorizontalAlignment', 'left');
+   set(hbuttonTest, 'FontWeight', 'bold');
    
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
@@ -101,6 +102,13 @@ function testing_gui
    if(pre_fill)
        set(heditTstFile, 'String', testing_file);
        set(heditWtsFile, 'String', weights_file);
+       if(file_type == 1)
+           set(hradioTypeReg, 'Value', 1);
+           set(hradioTypeCls, 'Value', 0);
+       else
+           set(hradioTypeReg, 'Value', 0);
+           set(hradioTypeCls, 'Value', 1);
+       end
        hasOutputs_Callback();
    end
  
