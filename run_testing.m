@@ -1,4 +1,15 @@
 function run_testing()
+%RUN_TESTING A GUI for processing data with an existing neural network.
+%
+%  This program is a graphical user interface for processing data through a
+%  neural network generated from one of the various training programs from 
+%  the Image Processing and Neural Networks Lab (IPNNL) at The University 
+%  of Texas at Arlington.
+% 
+%  See also RESOURCES, RUN_TRAINING.
+
+%  Rohit Rawat (rohitrawat@gmail.com), 08-23-2015
+%  $Revision: 1 $ $Date: 23-Aug-2015 15:50:31 $
 
 p = fileparts(mfilename('fullpath'));
 cd(p);
