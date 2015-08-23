@@ -27,6 +27,8 @@ switch(ID);
     % Advanced settings: Do not modify unless you know what you are doing!
     case 'DisableValidation'
         value = false;  % leave false. if true, validation file cannot be specified.
+    case 'FixedType'
+        value = 0;  % 0: user chooses file type, 1: fixed regression, 2: fixed classification
     case 'Extra'
         value = '';  % leave empty '', otherwise set to what the Extra input should be called
     case 'ExtraValue'

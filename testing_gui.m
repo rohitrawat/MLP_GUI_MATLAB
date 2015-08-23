@@ -72,7 +72,16 @@ function testing_gui
    set(hradioTypeReg, 'Value', 1);
    set(hradioTypeCls, 'parent', bg);
    set(bg, 'Visible', 'on');
- 
+   if(resources('FixedType')==1)
+       set(hradioTypeReg, 'Enable', 'off');
+       set(hradioTypeCls, 'Enable', 'off');
+   elseif(resources('FixedType')==2)
+       set(hradioTypeReg, 'Value', 0);
+       set(hradioTypeCls, 'Value', 1);
+       set(hradioTypeReg, 'Enable', 'off');
+       set(hradioTypeCls, 'Enable', 'off');
+   end
+   
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [hcheckHasOutputs tr bl] = makeControl(tl, round(labelWidths*1.5), 'checkbox', 'Desired Outputs Present', @hasOutputs_Callback);
@@ -102,12 +111,14 @@ function testing_gui
    if(pre_fill)
        set(heditTstFile, 'String', testing_file);
        set(heditWtsFile, 'String', weights_file);
-       if(file_type == 1)
-           set(hradioTypeReg, 'Value', 1);
-           set(hradioTypeCls, 'Value', 0);
-       else
-           set(hradioTypeReg, 'Value', 0);
-           set(hradioTypeCls, 'Value', 1);
+       if(resources('FixedType')==0)
+           if(file_type == 1)
+               set(hradioTypeReg, 'Value', 1);
+               set(hradioTypeCls, 'Value', 0);
+           else
+               set(hradioTypeReg, 'Value', 0);
+               set(hradioTypeCls, 'Value', 1);
+           end
        end
        hasOutputs_Callback();
    end

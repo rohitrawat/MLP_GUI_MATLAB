@@ -1,5 +1,7 @@
 function [E_t_best E_v_best] = training_program_interface(training_file, N, M, Nh, Nit, validation_file, file_type, Extra)
 
+E_t_best = NaN;
+E_v_best = NaN;
 if(file_type == 1)
     % call the program for regression case here:
     [E_t_best E_v_best Nh_best Nit_best Wi_best Wo_best lambda] = mlp_TRAIN(training_file, N, M, Nh, Nit, validation_file);

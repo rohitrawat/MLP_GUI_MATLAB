@@ -83,13 +83,28 @@ function training_gui
    [hradioTypeCls tr bl] = makeControl(tr, buttonWidths, 'radiobutton', 'Classification');
    set(hradioTypeReg, 'parent', bg);
    set(hradioTypeReg, 'Value', 1);
+   set(hradioTypeCls, 'Value', 0);
    set(hradioTypeCls, 'parent', bg);
    set(bg, 'Visible', 'on');
+   if(resources('FixedType')==1)
+       set(hradioTypeReg, 'Enable', 'off');
+       set(hradioTypeCls, 'Enable', 'off');
+   elseif(resources('FixedType')==2)
+       set(hradioTypeReg, 'Value', 0);
+       set(hradioTypeCls, 'Value', 1);
+       set(hradioTypeReg, 'Enable', 'off');
+       set(hradioTypeCls, 'Enable', 'off');
+   end
+       
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextInputs tr bl] = makeControl(tl, labelWidths, 'text', resources('N'));
    [heditInputs tr bl] = makeControl(tr, labelWidths, 'edit', '');
+   if(length(resources('N'))==0)
+       set(htextInputs, 'Visible', 'off');
+       set(heditInputs, 'Visible', 'off');
+   end
  
    message = [{'Image Processing and Neural Networks Lab'; 'The University of Texas at Arlington'; ''}; resources('Info'); {''; 'GUI Author: Rohit Rawat'}];
    [htextInfo tr bl] = makeControl(tr+[50 30], [350 200], 'text', message);
@@ -98,16 +113,28 @@ function training_gui
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextOutputs tr bl] = makeControl(tl, labelWidths, 'text', resources('M'));
    [heditOutputs tr bl] = makeControl(tr, labelWidths, 'edit', '');
+   if(length(resources('M'))==0)
+       set(htextOutputs, 'Visible', 'off');
+       set(heditOutputs, 'Visible', 'off');
+   end
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextNh tr bl] = makeControl(tl, labelWidths, 'text', resources('Nh'));
    [heditNh tr bl] = makeControl(tr, labelWidths, 'edit', '');
+   if(length(resources('Nh'))==0)
+       set(htextNh, 'Visible', 'off');
+       set(heditNh, 'Visible', 'off');
+   end
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
    [htextNit tr bl] = makeControl(tl, labelWidths, 'text', resources('Nit'));
    [heditNit tr bl] = makeControl(tr, labelWidths, 'edit', '');
+   if(length(resources('Nit'))==0)
+       set(htextNit, 'Visible', 'off');
+       set(heditNit, 'Visible', 'off');
+   end
  
    row = row+1;
    tl = [hOrigin vOrigin+(row-1)*(vHeight+vGap)];
@@ -150,12 +177,14 @@ function training_gui
    if(pre_fill)
        set(heditTrgFile, 'String', training_file);
        set(heditValFile, 'String', validation_file);
-       if(file_type == 1)
-           set(hradioTypeReg, 'Value', 1);
-           set(hradioTypeCls, 'Value', 0);
-       else
-           set(hradioTypeReg, 'Value', 0);
-           set(hradioTypeCls, 'Value', 1);
+       if(resources('FixedType')==0)
+           if(file_type == 1)
+               set(hradioTypeReg, 'Value', 1);
+               set(hradioTypeCls, 'Value', 0);
+           else
+               set(hradioTypeReg, 'Value', 0);
+               set(hradioTypeCls, 'Value', 1);
+           end
        end
        
        set(heditInputs, 'String', num2str(N));
