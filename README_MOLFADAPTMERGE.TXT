@@ -6,7 +6,10 @@ The University of Texas at Arlington.
 http://www.uta.edu/faculty/manry/
 
 This program trains a multi-layer perceptron with one hidden layer.
-The training algorithm used is Adaptive HWO-MOLF. See: 
+The training algorithm used is Adaptive HWO-MOLF-MERGE. See: 
+"A Novel Method of K - Fold Cross Testing and Validation and Model Selection"
+Nayana P Thatren & Rohit Rawat
+and
 Rohit Rawat, Jignesh Patel and Michael Manry, "Minimizing Validation 
 Error With Respect to Network Size and Number of Training Epochs," the 
 2013 International Joint Conference on Neural Networks.
@@ -45,17 +48,17 @@ The first four columns are the inputs and the last column has the class numbers.
 
 Validation data
 ---------------
-This program uses validation data for network sizing. If you have already split
-your data into training and validation files, supply both files to the program.
-If you did not, the program can automatically split the training file to
-generate validation data.
+This program does not need a separate validation data file. If you have already 
+split your data into training and validation files, you are encouraged to 
+combine them into one training file. The program can automatically split the 
+training file to generate validation data when it needs to.
 
 Other inputs
 ------------
 N: inputs, M: outputs, Nh: the number of hidden units to begin with, Nit: the 
 maximum number of training iterations/epochs. 
 During training, the number of hidden units and iterations is optimized to 
-minimize the validation error.
+minimize the internally generated validation error.
 
 Running the GUI
 ---------------
@@ -64,25 +67,20 @@ Configure all the parameters in the GUI and press the "Train" button.
 The program outputs can be seen in the MATLAB console. The network weights are 
 stored in the file weights.txt.
 
-![screenshot](screenshot.png)
-
 Running the console version
 ---------------------------
-The console version of the program is provided in the hwo_molf_pruning folder.
-please run the program "mlp_TRAIN.m", or "mlp_TRAIN_CLASS.m" to train a regression
-or a classification model. Running these programs without any arguments prompts
-the user for input on the command line. These can also be invoked as functions
-and their prototypes are given below:
+The console version of the program is provided in the merge_hidden_units folder.
+please run the program "TRAIN_MLP.m" to train a regression
+or a classification model. Running this program without any arguments prompts
+the user for input on the command line. To invoke as functions, their 
+prototypes are given below:
 
-[E_t_best E_v_best Nh_best Nit_best Wi_best Wo_best lambda] = 
-    mlp_TRAIN(training_file, N, M, Nh, Nit, validation_file)
+[MSE_trg weights_filename average_Nh] = 
+    mlp_train_nt(training_fname, N, M, ftype, Nh, Nit)
 
-[E_t_best E_v_best Nh_best Nit_best Wi_best Wo_best lambda] = 
-    mlp_TRAIN_CLASS(training_file, N, M, Nh, Nit, validation_file)
-
+ftype = 1 for approximation, and = 2 for classification files.
 The best network size and training iterations are returned as Nh_best
-and Nit_best. The training and validation error for the best network is
-returned as E_t_best and E_v_best.
+and Nit_best. The training error for the best network is returned as E_t_best.
 
 Processing or Testing
 ---------------------
