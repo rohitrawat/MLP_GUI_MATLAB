@@ -17,5 +17,11 @@ if(file_type == 1)
     error('This RBF code is only for classification.');
 else
     % call the program for classification case here:
-    [E_t_best E_v_best] = rbf_train(training_file, N, M, Nit, resources('weights_file'), validation_file);
+    h = gcf;
+    disp('Please wait for the processing to finish..');
+    disp('You can press Ctr-C in this window to stop the processing.');
+    commandwindow;
+    [E_t_best] = rbf_train(training_file, N, M, Nit, resources('weights_file'), validation_file);
+    E_v_best = NaN;
+    figure(h);
 end
